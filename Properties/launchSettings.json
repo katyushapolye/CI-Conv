@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Parser": {
+      "commandName": "Project",
+      "commandLineArgs": "rawdata.json  demonio"
+    }
+  }
+}
