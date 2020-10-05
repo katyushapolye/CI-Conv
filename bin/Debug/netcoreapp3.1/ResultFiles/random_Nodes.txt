@@ -1,4 +1,5 @@
-Id,Label,timeset0,Johannes Hudde, 
+Id,Label,timeset
+0,Johannes Hudde, 
 1,René Descartes, 
 2,René François de Sluse, 
 3,Isaac Newton, 
