@@ -37,19 +37,19 @@ using DataStructs;
         //Make line break happen with an custom header...
         public void ToCSV(ref string Adress,bool IsDivided, string Link_Header = "Source,Target,Type,Id,Label,timeset,Weight\n", string Node_Header = "Id,Label,timeset \n", bool CarryWeigh = false) 
         {
-            FileStream Link_File = File.Create(@"ResultFiles\" + Adress + "_Links.txt");
-            FileStream Node_File = File.Create(@"ResultFiles\" + Adress + "_Nodes.txt");
+            FileStream Link_File = File.Create(@"ResultFiles\" + Adress + "_Links.csv");
+            FileStream Node_File = File.Create(@"ResultFiles\" + Adress + "_Nodes.csv");
 
             //Writes The Headers.
             byte[] Header_Buffer = Encoding.UTF8.GetBytes(Link_Header);
-            Link_File.Write(Header_Buffer);
+            Link_File.Write(Header_Buffer,0,Header_Buffer.Length);
             Array.Clear(Header_Buffer, 0, Header_Buffer.Length);
             Header_Buffer = Encoding.UTF8.GetBytes(Node_Header);
-            Node_File.Write(Header_Buffer);
+            Node_File.Write(Header_Buffer, 0, Header_Buffer.Length) ;
             Array.Clear(Header_Buffer, 0, Header_Buffer.Length);
 
 
-            WriteLinks(ref Link_File);
+            WriteLinks(ref Link_File,CarryWeigh);
             WriteNodes(ref Node_File);
 
 
@@ -58,16 +58,29 @@ using DataStructs;
             Link_File.Close();
             Node_File.Close();
         }
-        private void WriteLinks(ref FileStream file) 
+        private void WriteLinks(ref FileStream file,bool Weight) 
         {
+            //fix weight
             byte[] Link_Buffer;
             
             for (int i = 0; i < this.Network.links.Count; i++)
             {
-                Link_Buffer = Encoding.UTF8.GetBytes(Network.links[i].source.ToString() + "," + Network.links[i].target.ToString() + ",Undirected," + i.ToString() + ",,,1" + "\n"  );
-                file.Write(Link_Buffer);
-                Array.Clear(Link_Buffer, 0, Link_Buffer.Length);
-                continue;
+                if(Weight == true)
+                {
+                    Link_Buffer = Encoding.UTF8.GetBytes(Network.links[i].source.ToString() + "," + Network.links[i].target.ToString() + ",Undirected," + i.ToString() + ",,," + Network.links[i].w + "\n");
+                    file.Write(Link_Buffer, 0, Link_Buffer.Length);
+                    Array.Clear(Link_Buffer, 0, Link_Buffer.Length);
+                    continue;
+
+                }
+                else
+                {
+                    Link_Buffer = Encoding.UTF8.GetBytes(Network.links[i].source.ToString() + "," + Network.links[i].target.ToString() + ",Undirected," + i.ToString() + ",,,1" + "\n");
+                    file.Write(Link_Buffer, 0, Link_Buffer.Length);
+                    Array.Clear(Link_Buffer, 0, Link_Buffer.Length);
+                    continue;
+                                    }
+             
 
             }
         }
@@ -80,7 +93,7 @@ using DataStructs;
                 if (vs.Length == 1)
                 {
                     Node_Buffer = Encoding.UTF8.GetBytes(i.ToString() + "," + vs[0].ToString() + ", \n");
-                    file.Write(Node_Buffer);
+                    file.Write(Node_Buffer, 0, Node_Buffer.Length) ;
                     Array.Clear(Node_Buffer, 0, Node_Buffer.Length);
                     continue;
 
@@ -88,7 +101,7 @@ using DataStructs;
                 else 
                 {
                     Node_Buffer = Encoding.UTF8.GetBytes(i.ToString() + "," +vs[1].ToString().Remove(0,1) + " " + vs[0].ToString() + ", \n");
-                    file.Write(Node_Buffer);
+                    file.Write(Node_Buffer,0,Node_Buffer.Length);
                     Array.Clear(Node_Buffer, 0, Node_Buffer.Length);
                     continue;
 
